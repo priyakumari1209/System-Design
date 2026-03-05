@@ -1,11 +1,5 @@
 # 🧠 System Design Mastery — 3 to 4 Month Roadmap
 
-> Based on HelloInterview's Low Level Design (LLD) curriculum.
-> Follow this guide week by week, commit your notes and code to Git,
-> and you'll have solid system design skills in 3–4 months.
-
----
-
 ## 📁 Folder Structure
 
 ```
