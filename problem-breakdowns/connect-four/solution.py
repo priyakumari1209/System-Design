@@ -1,4 +1,4 @@
-# solution.py — Connect Four
+# solution.py — Connect Four (Interactive)
 
 from enum import Enum
 
@@ -24,13 +24,27 @@ class Board:
     def __init__(self):
         self.grid = [[None] * self.COLS for _ in range(self.ROWS)]
 
+    def print_board(self):
+        print("\n  0   1   2   3   4   5   6")
+        print("+" + "---+" * self.COLS)
+        for row in self.grid:
+            print("|", end="")
+            for cell in row:
+                if cell is None:
+                    print("   |", end="")
+                elif cell == DiscColor.RED:
+                    print(" R |", end="")
+                else:
+                    print(" Y |", end="")
+            print()
+            print("+" + "---+" * self.COLS)
+
     def drop_disc(self, col, disc_color):
-        # find lowest empty row in this column
         for row in range(self.ROWS - 1, -1, -1):
             if self.grid[row][col] is None:
                 self.grid[row][col] = disc_color
                 return row
-        return -1  # column full
+        return -1
 
     def is_full(self):
         return all(self.grid[0][col] is not None for col in range(self.COLS))
@@ -66,7 +80,8 @@ class Game:
     def make_move(self, col):
         row = self.board.drop_disc(col, self.current_player.disc_color)
         if row == -1:
-            return False  # column full
+            print("Column is full! Try another column.")
+            return False
         if self.board.check_win(row, col):
             self.game_state = GameState.WIN
             self.winner = self.current_player
@@ -83,8 +98,34 @@ class Game:
             else self.players[0]
         )
 
-    def get_game_state(self):
-        return self.game_state
+# --- Run the game ---
+if __name__ == "__main__":
+    player1 = Player(1, "Player 1", DiscColor.RED)
+    player2 = Player(2, "Player 2", DiscColor.YELLOW)
+    game = Game(player1, player2)
 
-    def get_winner(self):
-        return self.winner
+    print("🎮 Welcome to Connect Four!")
+    print("Player 1 = R (RED)   Player 2 = Y (YELLOW)")
+    print("Choose a column (0-6) to drop your disc\n")
+
+    game.board.print_board()
+
+    while game.game_state == GameState.IN_PROGRESS:
+        player = game.current_player
+        print(f"\n{player.name} ({player.disc_color.name}) - choose column (0-6): ", end="")
+
+        try:
+            col = int(input())
+            if col < 0 or col > 6:
+                print("Invalid! Enter a number between 0 and 6")
+                continue
+            game.make_move(col)
+            game.board.print_board()
+        except ValueError:
+            print("Invalid input! Enter a number between 0 and 6")
+            continue
+
+    if game.game_state == GameState.WIN:
+        print(f"\n🏆 {game.winner.name} ({game.winner.disc_color.name}) WINS!")
+    else:
+        print("\n🤝 It's a DRAW!")
